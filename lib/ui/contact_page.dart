@@ -84,11 +84,77 @@ class _ContactPageState extends State<ContactPage> {
               Navigator.pop(context, _editedContact);
             } else {
               FocusScope.of(context).requestFocus(_nomeFocus);
-            },
-            //child: Icon(Icons.save)
+            }
           },
+          child: Icon(Icons.save),
+          backgroundColor: Colors.lightBlue,
+          ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(10.0),
+          child: Column(
+            children: <Widget>[
+              GestureDetector(
+                child: Container(
+                  width: 140.0,
+                  height: 140.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: _editedContact!.img != ''
+                      ? FileImage(File(_editedContact!.img))
+                      : AssetImage('images/pessoa.png')
+                          as ImageProvider
+                    )
+                  )
+                ),
+                onTap: () {
+                  ImagePicker()
+                  .getImage(source: ImageSource.camera, imageQuality: 50)
+                  .then((file) {
+                      if (file == null) {
+                        return;
+                      } else {
+                        setState(() {
+                          _editedContact!.img = file.path;
+                        });
+                      }
+                    }
+                  );
+                },
+              ),
+              TextField(
+                controller: nomeController,
+                focusNode: _nomeFocus,
+                decoration: InputDecoration(labelText: "Nome"),
+                onChanged: (text) {
+                  _userEdited = true;
+                  setState(() {
+                    _editedContact!.name = text;
+                  });
+                },
+              ),
+              TextField(
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(labelText: "E-mail"),
+                onChanged: (text) {
+                  _userEdited = true;
+                  _editedContact!.email = text;
+                },
+              ),
+              TextField(
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(labelText: "Telefone"),
+                onChanged: (text) {
+                  _userEdited = true;
+                  _editedContact!.phone = text;
+                },
+              )
+            ],
+          ),
         ),
       ),
-    )
+    );
   }
 }
